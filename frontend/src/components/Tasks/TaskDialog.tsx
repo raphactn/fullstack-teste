@@ -94,7 +94,7 @@ export function TaskDialog({ open, task, loading, onClose, onSubmit }: Props) {
                   </Field.Root>
 
                   <Field.Root>
-                    <Field.Label>Data de finalização</Field.Label>
+                    <Field.Label>Data de conclusão</Field.Label>
                     <Input type="date" {...form.register("endAt")} />
                   </Field.Root>
                 </Stack>

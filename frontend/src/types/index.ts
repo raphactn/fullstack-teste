@@ -4,6 +4,7 @@ export type Task = {
   description: string;
   status: "PENDING" | "IN_PROGRESS" | "DONE";
   endAt?: Date | string;
+  createdAt: Date | string;
   userId: string;
 };
 
