@@ -48,7 +48,7 @@ export function TaskCard({ task, onEdit, onDelete }: Props) {
                   })}
                 </Text>
               )}
-              <Text>-</Text>
+              {task.endAt && <Text>-</Text>}
               {task.endAt && (
                 <Text color="gray.400" fontSize="sm">
                   Conclusão:{" "}
