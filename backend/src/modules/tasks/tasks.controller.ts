@@ -8,6 +8,7 @@ import {
   Request,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -19,8 +20,18 @@ export class TasksController {
   constructor(private readonly service: TasksService) {}
 
   @Get()
-  async listAll(@Request() req) {
-    return this.service.listAll({ userId: req.user.id });
+  async listAll(
+    @Request() req,
+    @Query('search') search?: string,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.service.listAll({
+      userId: req.user.id,
+      search,
+      page: Number(page),
+      limit: Number(limit),
+    });
   }
 
   @Get(':id')

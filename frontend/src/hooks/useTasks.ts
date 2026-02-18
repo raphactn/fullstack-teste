@@ -4,15 +4,44 @@ import { Task, TaskFormData } from "@/types";
 import { toaster } from "@/components/ui/toaster";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 
-export function useTasks() {
+type PaginationMeta = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  hasNextPage: boolean;
+};
+
+type TasksResponse = {
+  data: Task[];
+  meta: PaginationMeta;
+};
+
+type TasksParams = {
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
+export function useTasks(params?: TasksParams) {
   const queryClient = useQueryClient();
 
+  const tasksKeys = {
+    all: ["tasks"] as const,
+    list: (params?: TasksParams) => ["tasks", params] as const,
+  };
+
   const tasksQuery = useQuery({
-    queryKey: ["tasks"],
+    queryKey: tasksKeys.list(params),
     queryFn: async () => {
-      const { data } = await api.get("/tasks");
-      return data as Task[];
+      const { data } = await api.get<TasksResponse>("/tasks", {
+        params,
+      });
+
+      return data;
     },
+
+    placeholderData: (previous) => previous,
   });
 
   const createTask = useMutation({

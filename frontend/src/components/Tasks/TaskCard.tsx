@@ -35,14 +35,17 @@ export function TaskCard({ task, onEdit, onDelete }: Props) {
           {status.label}
         </Badge>
         <HStack mb="6" mt={1} gap="3">
-          <Stack gap="0">
+          <Stack gap="0" maxW={"100%"}>
             <Text fontWeight="semibold" fontSize="lg" truncate>
               {task.title}
             </Text>
 
             {task.endAt && (
               <Text color="gray.400" fontSize="sm">
-                Finalização: {new Date(task.endAt).toLocaleDateString()}
+                Finalização:{" "}
+                {new Date(task.endAt).toLocaleDateString("pt-BR", {
+                  timeZone: "UTC",
+                })}
               </Text>
             )}
           </Stack>

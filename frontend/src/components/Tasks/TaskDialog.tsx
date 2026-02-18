@@ -13,6 +13,7 @@ import {
 import { useForm } from "react-hook-form";
 import { Task, TaskFormData } from "@/types";
 import { createTaskDefaults } from "@/constants/tasks";
+import { formatDateForInput } from "@/utils/formatDateForInput";
 
 interface Props {
   open: boolean;
@@ -24,6 +25,7 @@ interface Props {
 
 export function TaskDialog({ open, task, loading, onClose, onSubmit }: Props) {
   const isEditing = !!task;
+  console.log(task);
 
   const form = useForm<TaskFormData>({
     defaultValues: task
@@ -31,7 +33,7 @@ export function TaskDialog({ open, task, loading, onClose, onSubmit }: Props) {
           title: task.title,
           description: task.description,
           status: task.status,
-          endAt: task.endAt ?? "",
+          endAt: formatDateForInput(task.endAt) ?? "",
         }
       : createTaskDefaults,
   });

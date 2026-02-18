@@ -5,18 +5,56 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
-import { TaskStatus } from '@prisma/client';
+import { Prisma, TaskStatus } from '@prisma/client';
 import { TaskDTO } from './dtos/auth';
 
 @Injectable()
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  async listAll({ userId }: { userId: string }) {
-    return await this.prisma.tasks.findMany({
-      where: { userId },
-      orderBy: { updatedAt: 'desc' },
-    });
+  async listAll({
+    userId,
+    search,
+    page,
+    limit,
+  }: {
+    userId: string;
+    search?: string;
+    page: number;
+    limit: number;
+  }) {
+    const skip = (page - 1) * limit;
+
+    const where = {
+      userId,
+      ...(search && {
+        title: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      }),
+    } as Prisma.TasksWhereInput;
+
+    const [tasks, total] = await this.prisma.$transaction([
+      this.prisma.tasks.findMany({
+        where,
+        orderBy: { updatedAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      this.prisma.tasks.count({ where }),
+    ]);
+
+    return {
+      data: tasks,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+        hasNextPage: page * limit < total,
+      },
+    };
   }
 
   async getOne({ id, userId }: { id: string; userId: string }) {
